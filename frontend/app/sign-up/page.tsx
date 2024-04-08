@@ -1,16 +1,14 @@
 "use client";
-import { Button } from "@/components/ui/button";
+
 import {
+  Button,
   Card,
-  CardContent,
-  CardDescription,
+  CardBody,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+  Checkbox,
+  Input,
+} from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -44,23 +42,23 @@ export default function SignUp() {
   const emailRegex = new RegExp(emailRegexPattern);
 
   return (
-    <div className="sm:p-12 w-full h-full flex flex-col justify-start sm:justify-center sm:pt-4 pt-10 align-center items-center">
-      <Card className="w-full pt-16 sm:w-[400px] bg-grey-700 border-none sm:border-red-500">
+    <div className="sm:p-12 mt-16 w-full h-full flex flex-col justify-start sm:justify-center sm:pt-4 pt-10 align-center items-center">
+      <Card className="w-full pt-4 sm:w-[400px] bg-grey-700 border-none sm:border-red-500">
         <CardHeader>
-          <h1 className="text-white text-4xl sm:text-2xl font-bold">Sign up</h1>
+          <h1 className="text-black text-4xl sm:text-2xl font-bold">Sign up</h1>
         </CardHeader>
-        <CardContent>
+        <CardBody>
           <form>
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
-                <Label
-                  className="text-white sm:text-sm text-lg"
+                <label
+                  className="text-black sm:text-sm text-lg"
                   htmlFor="email"
                 >
                   Email
-                </Label>
+                </label>
                 <Input
-                  className="text-white sm:text-sm text-lg"
+                  className="text-black sm:text-sm text-lg"
                   onBlur={() => {
                     if (
                       details["email"] &&
@@ -81,14 +79,14 @@ export default function SignUp() {
                 />
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label
-                  className="text-white sm:text-sm text-lg"
+                <label
+                  className="text-black sm:text-sm text-lg"
                   htmlFor="password"
                 >
                   Password
-                </Label>
+                </label>
                 <Input
-                  className="text-white  sm:text-sm text-lg"
+                  className="text-black  sm:text-sm text-lg"
                   onBlur={() => {
                     if (
                       details["password1"] &&
@@ -112,14 +110,14 @@ export default function SignUp() {
                 ></Input>
               </div>
               <div className="flex flex-col space-y-1.5">
-                <Label
-                  className="text-white sm:text-sm text-lg"
+                <label
+                  className="text-black sm:text-sm text-lg"
                   htmlFor="password"
                 >
                   Re-enter Password
-                </Label>
+                </label>
                 <Input
-                  className="text-white  sm:text-sm text-lg"
+                  className="text-black  sm:text-sm text-lg"
                   onBlur={() => {
                     if (
                       details["password2"] &&
@@ -152,7 +150,7 @@ export default function SignUp() {
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       value={details["admin"]}
-                      onCheckedChange={(e) =>
+                      onValueChange={(e) =>
                         setDetails((previous) => ({ ...previous, admin: e }))
                       }
                       className="border-white"
@@ -160,17 +158,17 @@ export default function SignUp() {
                     />
                     <label
                       htmlFor="admin"
-                      className="text-sm text-white font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      className="text-sm text-black font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Sign up as admin
                     </label>
                   </div>
                 </div>
               </div>
-              <div className=" flex text-white gap-0">
+              <div className=" flex text-black gap-0">
                 <p className="text-sm text-red-500">{error}</p>
               </div>
-              <div className=" flex text-white gap-2">
+              <div className=" flex text-black gap-2">
                 <p className="text-md">I already have an account.</p>
                 <a href="/sign-in" className="font-bold">
                   Sign in
@@ -178,9 +176,12 @@ export default function SignUp() {
               </div>
             </div>
           </form>
-        </CardContent>
+        </CardBody>
         <CardFooter className="flex flex-col gap-3 w-full justify-between">
-          <Button variant="outline" className="w-full" onClick={() => {}}>
+          <Button
+            className="w-full font-medium text-lg text-white bg-blue-500 hover:bg-blue-600 hover:scale-105 duration-200"
+            onClick={() => {}}
+          >
             Sign up
           </Button>
           <Button className="w-full" onClick={() => router.back()}>
