@@ -20,7 +20,7 @@ export default function ResidencyContainer({
 }) {
   return (
     <Link href={`residencies/${id}`}>
-      <Card className="p-1 hover:scale-105 duration-200">
+      <Card className="p-1 [&_*]:cursor-pointer hover:scale-105 duration-200">
         <CardBody className="overflow-visible py-2">
           <img
             alt="Card background"

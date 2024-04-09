@@ -399,6 +399,8 @@ export default function ResidencyPage({
   if (loading == 0) return <p>Loading...</p>;
   if (!residency) return <p>No residency data</p>;
 
+  // const websiteUrl = residency.website.match(/asd/) ? residency.website : ""
+
   return (
     <div className="flex px-20 w-full flex-col items-center justify-start pt-10">
       <AddModel
@@ -423,7 +425,14 @@ export default function ResidencyPage({
           </div>
         </div>
         <div className="flex flex-col justify-end items-center gap-2">
-          <Link href={residency.website} target="_blank">
+          <Link
+            href={
+              residency.website.match(/https?:\/\/.*/g)
+                ? residency.website
+                : "http://" + residency.website
+            }
+            target="_blank"
+          >
             <Button className="w-full text-xl bg-gray-600 px-4 py-2 text-white font-medium hover:scale-105 hover:bg-gray-900">
               View website
             </Button>

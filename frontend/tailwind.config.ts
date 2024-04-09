@@ -21,6 +21,9 @@ const config = {
       },
     },
     extend: {
+      cursor: {
+        default: "url(/pickaxe.png), default",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -65,10 +68,21 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        wiggle: {
+          "0%, 100%": {
+            transform:
+              "scale(1.03, 1.03) skew(1deg, 1deg) translateX(5px) translateY(5px)",
+          },
+          "50%": {
+            transform:
+              "scale(1,1) skew(0deg, 0deg) translateX(0px) translateY(0px)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        wiggle: "wiggle 5s ease-in-out infinite",
       },
     },
   },

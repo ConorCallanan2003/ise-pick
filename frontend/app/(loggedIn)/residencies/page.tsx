@@ -174,7 +174,7 @@ export default function ResidenciesPage() {
       />
       <input
         placeholder="Search"
-        className="border-2 rounded-lg text-lg px-2 py-1"
+        className="border-2 cursor-pointer rounded-lg text-lg px-2 py-1"
         onChange={(e) => {
           setSearchTerm(e.target.value);
           setDataStale(true);
@@ -197,8 +197,11 @@ export default function ResidenciesPage() {
         {searchTerm ? (
           <></>
         ) : (
-          <div onClick={() => onAddResidencyModalOpen()}>
-            <Card className="p-1 h-full min-h-[300px] min-w-[250px] cursor-pointer w-full hover:scale-105 duration-200">
+          <div
+            className="[&_*]:cursor-pointer"
+            onClick={() => onAddResidencyModalOpen()}
+          >
+            <Card className="p-1 h-full min-h-[300px] min-w-[250px] w-full hover:scale-105 duration-200">
               <CardBody className="overflow-visible py-2 flex flex-col justify-center items-center">
                 <Plus size={160} />
               </CardBody>

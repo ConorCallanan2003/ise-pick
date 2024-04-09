@@ -11,7 +11,7 @@ import { Star } from "lucide-react";
 
 export default function ReviewContainer({ review }: { review: Review }) {
   return (
-    <Card className="w-full p-1 my-2 duration-200">
+    <Card className="w-full cursor-pointer p-1 my-2 duration-200">
       <CardHeader className="-mb-2 flex justify-between">
         <h1 className="pr-2 text-md font-bold ">
           {review.user ? review.user.name : "Anonymous"} -{" "}
@@ -33,9 +33,10 @@ export default function ReviewContainer({ review }: { review: Review }) {
         <div className="flex flex-col gap-3">
           <p>{review.description}</p>
           <p className="text-md font-medium">
-            Salary: €
+            Salary:
             {review.salary
-              ? review.salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              ? " €" +
+                review.salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
               : "Undisclosed"}
           </p>
         </div>
