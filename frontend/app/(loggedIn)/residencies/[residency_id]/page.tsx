@@ -168,7 +168,6 @@ const AddModel = ({
                 variant="bordered"
                 className="max-w-xs"
                 onInputChange={(e) => setCurrentTechnology(e.toLowerCase())}
-                // onSubmit={(e) => console.log(e)}
                 defaultItems={technologyOptions}
                 onKeyDown={(e) => {
                   if (
@@ -227,7 +226,6 @@ const AddModel = ({
                 variant="bordered"
                 className="max-w-xs"
                 onInputChange={(e) => setCurrentBenefits(e)}
-                // onSubmit={(e) => console.log(e)}
                 defaultItems={benefitsOptions}
                 onKeyDown={(e) => {
                   if (
