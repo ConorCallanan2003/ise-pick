@@ -142,6 +142,7 @@ export default function ResidenciesPage() {
           50,
           searchTerm != "" ? { filter: `name ~ "%${searchTerm}%"` } : {}
         );
+      console.log(items);
       if (items) {
         items.map((item) => {
           const url = pb.files.getUrl(item, item.logo, {
