@@ -1,3 +1,3 @@
 import PocketBase from "pocketbase";
-
-export const pb = new PocketBase("http://127.0.0.1:8090");
+console.log(process.env.NEXT_PUBLIC_PB_URL);
+export const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL);
