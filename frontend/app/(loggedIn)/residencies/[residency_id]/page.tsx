@@ -334,7 +334,6 @@ export default function ResidencyPage({
 }) {
   const [residency, setResidency] = useState<Residency>();
   const [loading, setLoading] = useState(0);
-  const [currentReview, setCurrentReview] = useState<Review | undefined>();
   const [reviews, setReviews] = useState<Review[]>();
   const [dataStale, setDateStale] = useState(true);
 
@@ -397,10 +396,8 @@ export default function ResidencyPage({
   if (loading == 0) return <p>Loading...</p>;
   if (!residency) return <p>No residency data</p>;
 
-  // const websiteUrl = residency.website.match(/asd/) ? residency.website : ""
-
   return (
-    <div className="flex px-20 w-full flex-col items-center justify-start pt-10">
+    <div className="flex lg:px-20 md:px-8 px-2 w-full flex-col items-center justify-start pt-10">
       <AddModel
         isOpen={isOpenAddModal}
         onClose={() => {
@@ -409,21 +406,22 @@ export default function ResidencyPage({
         }}
         residency={residency}
       />
-      <div className="flex w-full items-between">
-        <div className="w-full flex items-start gap-8">
+      <div className="flex flex-col lg:flex-row w-full items-between">
+        <div className="w-full flex flex-col md:flex-row lg:justify-start items-center md:items-start md:gap-8">
           <img
-            className="h-[250px] w-[250px] rounded-lg object-cover"
+            className="h-[250px] w:full lg:w-[250px] xl:w-[400px] rounded-lg object-contain"
             src={residency?.logo}
           />
-          <div className="flex h-[250px] flex-col justify-end">
+          <div className="flex w-[0px] h-[0px] lg:w-full overflow-hidden md:overflow-auto md:h-[250px] flex-col justify-end">
             <h1 className="text-left text-5xl font-bold">{residency.name}</h1>
             <h2 className="text-left w-[400px] text-4xl font-medium pb-4">
               {residency.description}
             </h2>
           </div>
         </div>
-        <div className="flex flex-col justify-end items-center gap-2">
+        <div className="flex flex-col justify-end items-center lg:pt-0 pt-8 gap-3 lg:gap-2">
           <Link
+            className="w-full"
             href={
               residency.website.match(/https?:\/\/.*/g)
                 ? residency.website
@@ -443,7 +441,7 @@ export default function ResidencyPage({
           </Button>
         </div>
       </div>
-      <div className="flex flex-col w-full items-center justify-center pt-12">
+      <div className="flex flex-col w-full items-center justify-center pt-6 lg:pt-12">
         <h2 className="text-4xl font-bold text-center pb-6">Reviews</h2>
         <div className="flex flex-col w-full">
           {reviews?.map((review) => (

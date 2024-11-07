@@ -31,7 +31,9 @@ export default function SignIn() {
     <div className="sm:p- mt-20 w-full h-full flex flex-col justify-center sm:justify-center sm:pt-0 pt-10 align-center items-center">
       <Card className="w-full pt-4 sm:w-[400px] bg-grey-700 border-none sm:border-red-500">
         <CardHeader>
-          <h1 className="text-black text-5xl sm:text-2xl font-bold">Sign in</h1>
+          <h1 className="text-black lg:text-4xl md:text-3xl text-2xl font-bold">
+            Sign in
+          </h1>
         </CardHeader>
         <CardBody>
           <form>

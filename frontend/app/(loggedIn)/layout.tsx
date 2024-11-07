@@ -1,6 +1,5 @@
-import { useEffect } from "react";
+"use client";
 import NavBar from "../components/nav-bar/NavBar";
-import { pb } from "@/lib/pb";
 
 export default function Layout({
   children,

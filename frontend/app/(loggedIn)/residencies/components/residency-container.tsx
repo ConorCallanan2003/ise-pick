@@ -9,7 +9,6 @@ export default function ResidencyContainer({
   id,
   image,
   avgScore,
-  countScore,
 }: {
   name: string;
   description: string;
@@ -24,7 +23,7 @@ export default function ResidencyContainer({
         <CardBody className="overflow-visible py-2">
           <img
             alt="Card background"
-            className="object-cover h-[300px] rounded-xl"
+            className="object-contain h-[300px] rounded-xl"
             src={image}
           />
         </CardBody>
