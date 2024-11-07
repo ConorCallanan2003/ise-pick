@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   CardBody,
-  CardFooter,
   Input,
   Modal,
   ModalBody,
@@ -59,7 +58,6 @@ const AddAddResidencyModal = ({
                   .collection("residencies")
                   .create(formData);
                 onClose();
-                setDataStale(true);
               }}
             >
               <ModalHeader className="flex flex-col gap-1">
@@ -109,6 +107,7 @@ const AddAddResidencyModal = ({
                 <Button
                   type="submit"
                   className="text-white font-medium bg-green-500 hover:bg-green-550 hover:scale-105"
+                  onPress={() => setDataStale(true)}
                 >
                   Submit
                 </Button>
@@ -123,8 +122,8 @@ const AddAddResidencyModal = ({
 
 export default function ResidenciesPage() {
   const [residencies, setResidencies] = useState<Residency[]>([]);
-  const [dataStale, setDataStale] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [dataStale, setDataStale] = useState(true);
 
   const {
     isOpen: isAddResidencyModalOpen,
@@ -133,6 +132,9 @@ export default function ResidenciesPage() {
   } = useDisclosure();
 
   const getResidencies = async () => {
+    if (!dataStale) {
+      return;
+    }
     try {
       const { items }: { items: Residency[] } = await pb
         .collection("residencies_with_reviews")
@@ -150,6 +152,7 @@ export default function ResidenciesPage() {
           item.logo = url;
         });
         setResidencies(items);
+        setDataStale(false);
       }
     } catch (err: any) {
       if (!err.isAbort) {
@@ -159,10 +162,7 @@ export default function ResidenciesPage() {
   };
 
   useEffect(() => {
-    if (dataStale) {
-      getResidencies();
-      setDataStale(false);
-    }
+    getResidencies();
   }, [dataStale]);
 
   return (
@@ -179,7 +179,6 @@ export default function ResidenciesPage() {
           className="border-3 border-transparent sm:w-[240px] w-full focus:ring-gray-500 focus:border-gray-500 focus:outline-none duration-200 cursor-text rounded-2xl bg-gray-200 text-black text-lg px-3 py-2"
           onChange={(e) => {
             setSearchTerm(e.target.value);
-            setDataStale(true);
           }}
         />
       </div>

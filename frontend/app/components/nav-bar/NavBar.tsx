@@ -66,9 +66,9 @@ export default function NavBar() {
         <div className="absolute sm:visible sm:z-1 z-0 invisible flex justify-end lg:gap-2 top-[30px] right-[30px]">
           <NavBarItem name={"Home"} path={"/"} />
           <NavBarItem name={"Residencies"} path={"/residencies"} />
-          <NavBarItem name={"Notes"} path={"/notes"} />
-          {/* <NavBarItem name={"Assessments"} path={"/assessments"} />
-        <NavBarItem name={"Projects"} path={"/projects"} /> */}
+          <NavBarItem disabled name={"Notes"} path={"/notes"} />
+          <NavBarItem disabled name={"Assessments"} path={"/assessments"} />
+          <NavBarItem disabled name={"Projects"} path={"/projects"} />
           {authStore ? (
             <div
               onClick={() => {
@@ -89,7 +89,13 @@ export default function NavBar() {
         <div className="pb-6 pt-6">
           <DrawerContentItem name={"Home"} path={"/"} />
           <DrawerContentItem name={"Residencies"} path={"/residencies"} />
-          <DrawerContentItem name={"Notes"} path={"/notes"} />
+          <DrawerContentItem disabled name={"Notes"} path={"/notes"} />
+          <DrawerContentItem
+            disabled
+            name={"Assessments"}
+            path={"/assessments"}
+          />
+          <DrawerContentItem disabled name={"Projects"} path={"/projects"} />
         </div>
       </DrawerContent>
     </Drawer>

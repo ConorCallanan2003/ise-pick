@@ -20,8 +20,9 @@ import {
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Residency } from "../page";
-import { X } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import ReviewContainer from "../components/review-container";
+import { before } from "node:test";
 
 type User = {
   name: string;
@@ -59,7 +60,7 @@ async function addReview(
     user,
   };
 
-  const record = await pb.collection("residency_reviews").create(data);
+  await pb.collection("residency_reviews").create(data);
 
   return;
 }
@@ -68,12 +69,13 @@ const AddModel = ({
   isOpen,
   onClose,
   residency,
+  setDataStale,
 }: {
   isOpen: boolean;
   onClose: () => void;
   residency: Residency;
+  setDataStale: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const [loading, setLoading] = useState(false);
   const [score, setScore] = useState(2.5);
   const [salary, setSalary] = useState(0);
   const [description, setDescription] = useState("");
@@ -170,22 +172,13 @@ const AddModel = ({
                 onInputChange={(e) => setCurrentTechnology(e.toLowerCase())}
                 defaultItems={technologyOptions as Iterable<object>}
                 onKeyDown={(e) => {
+                  // @ts-ignore
+                  e.continuePropagation();
                   if (
                     e.code == "Enter" &&
                     !technologies.includes(currentTechnology.toLowerCase())
                   ) {
                     setTechnologies((prev) => [...prev, currentTechnology]);
-                  }
-                }}
-                onSelectionChange={(e) => {
-                  if (
-                    e &&
-                    !technologies.includes((e as string).toLowerCase())
-                  ) {
-                    setTechnologies((prev) => [
-                      ...prev,
-                      (e as string).toLowerCase(),
-                    ]);
                   }
                 }}
               >
@@ -228,19 +221,13 @@ const AddModel = ({
                 onInputChange={(e) => setCurrentBenefits(e)}
                 defaultItems={benefitsOptions as Iterable<object>}
                 onKeyDown={(e) => {
+                  // @ts-ignore
+                  e.continuePropagation();
                   if (
                     e.code == "Enter" &&
                     !benefits.includes(currentBenefits.toLowerCase())
                   ) {
                     setBenefits((prev) => [...prev, currentBenefits]);
-                  }
-                }}
-                onSelectionChange={(e: any) => {
-                  if (e && !benefits.includes((e as string).toLowerCase())) {
-                    setBenefits((prev) => [
-                      ...prev,
-                      (e as string).toLowerCase(),
-                    ]);
                   }
                 }}
               >
@@ -291,7 +278,6 @@ const AddModel = ({
                 color="danger"
                 variant="light"
                 onPress={() => {
-                  setLoading(true);
                   onClose();
                 }}
               >
@@ -303,7 +289,6 @@ const AddModel = ({
                   const userId = pb.authStore.model
                     ? pb.authStore.model.id
                     : undefined;
-                  setLoading(true);
                   await addReview(
                     score,
                     residency,
@@ -313,8 +298,8 @@ const AddModel = ({
                     technologies,
                     benefits
                   );
+                  setDataStale(true);
                   onClose();
-                  //   addCopies(quantity, residencyId).then(() => onClose());
                 }}
               >
                 Submit
@@ -333,17 +318,14 @@ export default function ResidencyPage({
   params: { residency_id: string };
 }) {
   const [residency, setResidency] = useState<Residency>();
-  const [loading, setLoading] = useState(0);
   const [reviews, setReviews] = useState<Review[]>();
   const [dataStale, setDateStale] = useState(true);
-
-  const router = useRouter();
 
   const {
     isOpen: isOpenAddModal,
     onOpen: onOpenAddModal,
     onClose: onCloseAddModal,
-  } = useDisclosure({ onClose: () => setDateStale(true) });
+  } = useDisclosure({ onClose: () => {} });
 
   async function getResidency(id: string) {
     try {
@@ -386,69 +368,133 @@ export default function ResidencyPage({
     if (dataStale) {
       getResidency(params.residency_id).then(() => {
         getReviews(params.residency_id).then(() => {
-          setLoading((previous) => previous + 1);
           setDateStale(false);
         });
       });
     }
   }, [dataStale]);
 
-  if (loading == 0) return <p>Loading...</p>;
-  if (!residency) return <p>No residency data</p>;
+  if (!residency)
+    return (
+      <div className="w-full h-[600px] pt-10 flex flex-col justify-center items-center">
+        <div role="status">
+          <svg
+            aria-hidden="true"
+            className="w-24 h-24 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="currentFill"
+            />
+          </svg>
+          <span className="sr-only">Loading...</span>
+        </div>
+      </div>
+    );
 
   return (
-    <div className="flex lg:px-20 md:px-8 px-2 w-full flex-col items-center justify-start pt-10">
-      <AddModel
-        isOpen={isOpenAddModal}
-        onClose={() => {
-          onCloseAddModal();
-          setDateStale(true);
-        }}
-        residency={residency}
-      />
-      <div className="flex flex-col lg:flex-row w-full items-between">
-        <div className="w-full flex flex-col md:flex-row lg:justify-start items-center md:items-start md:gap-8">
-          <img
-            className="h-[250px] w:full lg:w-[250px] xl:w-[400px] rounded-lg object-contain"
-            src={residency?.logo}
-          />
-          <div className="flex w-[0px] h-[0px] lg:w-full overflow-hidden md:overflow-auto md:h-[250px] flex-col justify-end">
-            <h1 className="text-left text-5xl font-bold">{residency.name}</h1>
-            <h2 className="text-left w-[400px] text-4xl font-medium pb-4">
-              {residency.description}
-            </h2>
+    <div className="flex lg:px-20 md:px-8 px-2 w-full flex-col items-center justify-start pt-6">
+      {dataStale ? (
+        <div className="w-full h-[600px] pt-10 flex flex-col justify-center items-center">
+          <div role="status">
+            <svg
+              aria-hidden="true"
+              className="w-24 h-24 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+              viewBox="0 0 100 101"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                fill="currentColor"
+              />
+              <path
+                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                fill="currentFill"
+              />
+            </svg>
+            <span className="sr-only">Loading...</span>
           </div>
         </div>
-        <div className="flex flex-col justify-end items-center lg:pt-0 pt-8 gap-3 lg:gap-2">
-          <Link
-            className="w-full"
-            href={
-              residency.website.match(/https?:\/\/.*/g)
-                ? residency.website
-                : "http://" + residency.website
-            }
-            target="_blank"
-          >
-            <Button className="w-full text-xl bg-gray-600 px-4 py-2 text-white font-medium hover:scale-105 hover:bg-gray-900">
-              View website
-            </Button>
-          </Link>
-          <Button
-            onClick={() => onOpenAddModal()}
-            className="w-full text-xl bg-white px-4 py-2 text-black border-1 border-gray-200 font-medium hover:scale-105 hover:bg-gray-100"
-          >
-            Add review
-          </Button>
-        </div>
-      </div>
-      <div className="flex flex-col w-full items-center justify-center pt-6 lg:pt-12">
-        <h2 className="text-4xl font-bold text-center pb-6">Reviews</h2>
-        <div className="flex flex-col w-full">
-          {reviews?.map((review) => (
-            <ReviewContainer key={review.id} review={review} />
-          ))}
-        </div>
-      </div>
+      ) : (
+        <>
+          <AddModel
+            isOpen={isOpenAddModal}
+            onClose={() => {
+              onCloseAddModal();
+            }}
+            residency={residency}
+            setDataStale={setDateStale}
+          />
+          <div className="w-screen h-[80px] flex justify-start items-center">
+            <Link href="/residencies">
+              <ChevronLeft className="absolute [&_*]:cursor-pointer cursor-pointer h-[50px] w-[50px] left-[20px] rounded-full text-black hover:bg-gray-200 duration-200 p-2 pr-" />
+            </Link>
+          </div>
+          <div className="flex flex-col lg:flex-row w-full items-between">
+            <div className="w-full flex flex-col md:flex-row lg:justify-start items-center md:items-start md:gap-8">
+              <img
+                className="h-[250px] w:full lg:w-[250px] xl:w-[400px] rounded-lg object-contain"
+                src={residency?.logo}
+              />
+              <div className="flex w-[0px] h-[0px] lg:w-full overflow-hidden md:overflow-auto md:h-[250px] flex-col justify-end">
+                <h1 className="text-left text-5xl font-bold">
+                  {residency.name}
+                </h1>
+                <h2 className="text-left w-[400px] text-4xl font-medium pb-4">
+                  {residency.description}
+                </h2>
+              </div>
+            </div>
+            <div className="flex flex-col justify-end items-center lg:pt-0 pt-8 gap-3 lg:gap-2">
+              <Link
+                className="w-full"
+                href={
+                  residency.website.match(/https?:\/\/.*/g)
+                    ? residency.website
+                    : "http://" + residency.website
+                }
+                target="_blank"
+              >
+                <Button className="w-full text-xl bg-gray-600 px-4 py-2 text-white font-medium hover:scale-105 hover:bg-gray-900">
+                  View website
+                </Button>
+              </Link>
+              <Button
+                onClick={() => onOpenAddModal()}
+                className="w-full text-xl bg-white px-4 py-2 text-black border-1 border-gray-200 font-medium hover:scale-105 hover:bg-gray-100"
+              >
+                Add review
+              </Button>
+            </div>
+          </div>
+          <div className="flex flex-col w-full items-center justify-center pt-6 lg:pt-12">
+            {reviews && reviews.length > 0 ? (
+              <>
+                <h2 className="text-4xl font-bold text-center pb-6">Reviews</h2>
+                <div className="flex flex-col w-full">
+                  {reviews?.map((review) => (
+                    <ReviewContainer key={review.id} review={review} />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="text-4xl font-bold text-center pb-6">
+                  No Reviews
+                </h2>
+              </>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
