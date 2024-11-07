@@ -168,7 +168,7 @@ const AddModel = ({
                 variant="bordered"
                 className="max-w-xs"
                 onInputChange={(e) => setCurrentTechnology(e.toLowerCase())}
-                defaultItems={Iterator.from(technologyOptions.values())}
+                defaultItems={technologyOptions}
                 onKeyDown={(e) => {
                   if (
                     e.code == "Enter" &&
