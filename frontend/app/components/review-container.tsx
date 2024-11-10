@@ -6,8 +6,8 @@ import {
   Chip,
   image,
 } from "@nextui-org/react";
-import { Review } from "../[residency_id]/page";
 import { Star } from "lucide-react";
+import { Review } from "@/app/(loggedIn)/(navbar)/residencies/[residency_id]/page";
 
 export default function ReviewContainer({ review }: { review: Review }) {
   return (
