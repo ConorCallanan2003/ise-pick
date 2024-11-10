@@ -1,5 +1,5 @@
 "use client";
-import ResidencyContainer from "@/app/(loggedIn)/residencies/components/residency-container";
+import ResidencyContainer from "@/app/components/residency-container";
 import { pb } from "@/lib/pb";
 import {
   Button,

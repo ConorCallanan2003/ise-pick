@@ -17,12 +17,10 @@ import {
   Textarea,
   useDisclosure,
 } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Residency } from "../page";
 import { ChevronLeft, X } from "lucide-react";
-import ReviewContainer from "../components/review-container";
-import { before } from "node:test";
+import ReviewContainer from "@/app/components/review-container";
 
 type User = {
   name: string;
@@ -319,7 +317,7 @@ export default function ResidencyPage({
 }) {
   const [residency, setResidency] = useState<Residency>();
   const [reviews, setReviews] = useState<Review[]>();
-  const [dataStale, setDateStale] = useState(true);
+  const [dataStale, setDataStale] = useState(true);
 
   const {
     isOpen: isOpenAddModal,
@@ -368,13 +366,13 @@ export default function ResidencyPage({
     if (dataStale) {
       getResidency(params.residency_id).then(() => {
         getReviews(params.residency_id).then(() => {
-          setDateStale(false);
+          setDataStale(false);
         });
       });
     }
   }, [dataStale]);
 
-  if (!residency)
+  if (dataStale)
     return (
       <div className="w-full h-[600px] pt-10 flex flex-col justify-center items-center">
         <div role="status">
@@ -398,6 +396,14 @@ export default function ResidencyPage({
         </div>
       </div>
     );
+
+  if (!residency) {
+    return (
+      <div className="w-full h-full flex justify-center items-center text-2xl">
+        Error retrieving residency data...
+      </div>
+    );
+  }
 
   return (
     <div className="flex lg:px-20 md:px-8 px-2 w-full flex-col items-center justify-start pt-6">
@@ -431,7 +437,7 @@ export default function ResidencyPage({
               onCloseAddModal();
             }}
             residency={residency}
-            setDataStale={setDateStale}
+            setDataStale={setDataStale}
           />
           <div className="w-screen h-[80px] flex justify-start items-center">
             <Link href="/residencies">
@@ -476,7 +482,7 @@ export default function ResidencyPage({
             </div>
           </div>
           <div className="flex flex-col w-full items-center justify-center pt-6 lg:pt-12">
-            {reviews && reviews.length > 0 ? (
+            {reviews ? (
               <>
                 <h2 className="text-4xl font-bold text-center pb-6">Reviews</h2>
                 <div className="flex flex-col w-full">

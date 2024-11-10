@@ -1,5 +1,5 @@
 "use client";
-
+import { pb } from "@/lib/pb";
 import {
   Button,
   Card,
@@ -13,8 +13,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type SignUpParameters = {
+  name: string;
   email: string;
   password: string;
+  passwordConfirm: string;
 };
 
 function addUserAsAdmin(email: string) {
@@ -50,6 +52,23 @@ export default function SignUp() {
         <CardBody>
           <form>
             <div className="grid w-full items-center gap-4">
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-black sm:text-sm text-lg" htmlFor="name">
+                  Name
+                </label>
+                <Input
+                  className="text-black sm:text-sm text-lg"
+                  onChange={(e) => {
+                    setError("");
+                    setDetails((previous) => ({
+                      ...previous,
+                      name: e.target.value,
+                    }));
+                  }}
+                  id="name"
+                  placeholder="Name"
+                />
+              </div>
               <div className="flex flex-col space-y-1.5">
                 <label
                   className="text-black sm:text-sm text-lg"
@@ -180,7 +199,22 @@ export default function SignUp() {
         <CardFooter className="flex flex-col gap-3 w-full justify-between">
           <Button
             className="w-full font-medium text-lg text-white bg-blue-500 hover:bg-blue-600 hover:scale-105 duration-200"
-            onClick={() => {}}
+            onClick={() => {
+              const newUserDetails: SignUpParameters = {
+                name: details.name,
+                email: details.email,
+                password: details.password1,
+                passwordConfirm: details.password2,
+              };
+              pb.collection("users")
+                .create(newUserDetails)
+                .then(() =>
+                  pb
+                    .collection("users")
+                    .requestVerification(newUserDetails.email)
+                );
+              router.push("/");
+            }}
           >
             Sign up
           </Button>

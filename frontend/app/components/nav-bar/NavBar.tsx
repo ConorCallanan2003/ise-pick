@@ -2,22 +2,13 @@
 import Link from "next/link";
 import NavBarItem from "./NavBarItem";
 import { useEffect, useState } from "react";
-import { AuthModel, BaseAuthStore } from "pocketbase";
+import { AuthModel } from "pocketbase";
 import { pb } from "@/lib/pb";
 import { useRouter } from "next/navigation";
 import { Menu } from "lucide-react";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { Button } from "@nextui-org/react";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import DrawerContentItem from "./DrawerContentItem";
+import Cookie from "js-cookie";
 
 export default function NavBar() {
   const [dataStale, setDataStale] = useState(true);
@@ -73,7 +64,7 @@ export default function NavBar() {
             <div
               onClick={() => {
                 pb.authStore.clear();
-                setDataStale(true);
+                Cookie.remove("pbAuthToken");
                 router.push("/sign-in");
               }}
               className="font-medium cursor-pointer text-lg px-4 py-2 rounded-lg bg-white hover:bg-gray-200 text-black duration-200 hover:text-black"

@@ -41,22 +41,26 @@ export default function ReviewContainer({ review }: { review: Review }) {
           </p>
         </div>
       </CardBody>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex md:flex-row flex-col items-start justify-between">
         <div className="flex gap-2 text-md font-medium">
           {review.technologies && review.technologies.length > 0
             ? "Technologies: "
             : ""}
-          {(review.technologies ?? []).map((technology) => (
-            <Chip size="sm" key={technology} className="select-none">
-              <div className="relative group">
-                <div className="w-full flex relative group justify-center items-center">
-                  <p className="w-full text-bold">{technology.toUpperCase()}</p>
+          <div className="overflow-scroll">
+            {(review.technologies ?? []).map((technology) => (
+              <Chip size="sm" key={technology} className="select-none">
+                <div className="relative group">
+                  <div className="w-full flex relative group justify-center items-center">
+                    <p className="w-full text-bold">
+                      {technology.toUpperCase()}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </Chip>
-          ))}
+              </Chip>
+            ))}
+          </div>
         </div>
-        <div className="flex justify-center align-center items-center">
+        <div className="flex md:pt-0 pt-4 justify-center align-center items-center">
           <h4 className="pr-1 text-md font-medium leading-none ">
             {review.score}
           </h4>
