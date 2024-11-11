@@ -1,7 +1,12 @@
 # ISE-Pick
+
+<img width="800" alt="Screenshot 2024-11-11 at 14 49 10" src="https://github.com/user-attachments/assets/fa5d71a8-ca4e-4bcd-8666-e3c5e87877bb">
+
+
 A simple website for collecting and displaying residency reviews.
 
 Potential for more features further down the line (class notes, discussions, past papers, etc.)
+
 
 ## Architecture
 - NextJS Frontend
