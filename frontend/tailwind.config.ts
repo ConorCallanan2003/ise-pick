@@ -80,6 +80,15 @@ const config = {
             height: "0",
           },
         },
+        gradient: {
+          to: { "background-position": "200% center" },
+          "0%, 100%": {
+            transform: "scale(1.02, 1.02)",
+          },
+          "50%": {
+            transform: "scale(1,1)",
+          },
+        },
         wiggle: {
           "0%, 100%": {
             transform:
@@ -90,10 +99,39 @@ const config = {
               "scale(1,1) skew(0deg, 0deg) translateX(0px) translateY(0px)",
           },
         },
+        loading_button: {
+          "0%": {
+            "background-size": "200% 200%",
+            "background-position": "left center",
+            transform: "scale(1, 1)  ",
+          },
+          "25%": {
+            "background-size": "200% 200%",
+            "background-position": "right center",
+            transform: "scale(1.02, 1.02)  ",
+          },
+          "50%": {
+            "background-size": "200% 200%",
+            "background-position": "left center",
+            transform: "scale(1, 1) ",
+          },
+          "75%": {
+            "background-size": "200% 200%",
+            "background-position": "left center",
+            transform: "scale(1.02, 1.02) ",
+          },
+          "100%": {
+            "background-size": "200% 200%",
+            "background-position": "left center",
+            transform: "scale(1, 1) ",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "loading-button": "loading_button 1s infinite",
+        gradient: "gradient 1s linear infinite",
         wiggle: "wiggle 10s ease-in-out infinite",
       },
       borderRadius: {

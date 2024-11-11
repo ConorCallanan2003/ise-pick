@@ -1,0 +1,25 @@
+# ISE-Pick
+A simple website for collecting and displaying residency reviews.
+
+Potential for more features further down the line (class notes, discussions, past papers, etc.)
+
+## Architecture
+- NextJS Frontend
+- Tailwind CSS Framework
+- Pocketbase as a single-binary backend (database, auth, file storage)
+	Pocketbase can be extended using Go or Javascript, may be necessary if adding new features. [DOCS](https://pocketbase.io/docs/use-as-framework/)
+
+## How to test/run locally for development
+1. Pull the repo
+2. Download the [pocketbase binary](https://pocketbase.io/docs/) for your OS/architecture
+3. From the `frontend` directory, install dependencies (`npm i` or `bun i`) and then run it (`npm run dev` or `bun run dev`)
+4. Serve the pocketbase binary locally (`./pocketbase serve`)
+5. Add a file for dev environment variables `{project_dir}/.env.local`:
+	```
+	NEXT_PUBLIC_PB_URL="<ADDRESS + PORT OF POCKETBASE>"
+	```
+	Will probably look like this:
+	```
+	NEXT_PUBLIC_PB_URL="http://localhost:8090/"
+	```
+
