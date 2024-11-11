@@ -83,7 +83,7 @@ const config = {
         wiggle: {
           "0%, 100%": {
             transform:
-              "scale(1.03, 1.03) skew(1deg, 1deg) translateX(5px) translateY(5px)",
+              "scale(1.03, 1.03) skew(1deg, 1deg) translateX(-2px) translateY(2px)",
           },
           "50%": {
             transform:
@@ -94,7 +94,7 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        wiggle: "wiggle 5s ease-in-out infinite",
+        wiggle: "wiggle 10s ease-in-out infinite",
       },
       borderRadius: {
         lg: "var(--radius)",

@@ -34,8 +34,16 @@ export default function NavBar() {
           </DrawerTrigger>
         </div>
         <div className="absolute sm:z-1 z-0 sm:visible invisible flex justify-end gap-2 top-[35px] left-[35px]">
-          <Link className="cursor-pointer text-3xl font-bold" href={"/"}>
-            ISEPick
+          <Link
+            className="cursor-pointer flex items-center text-3xl font-bold"
+            href={"/"}
+          >
+            <h1 className="font-bold pt-[2px] select-none font-bold bg-gradient-to-r bg-clip-text text-transparent from-green-700 to-blue-900">
+              [ISE]
+            </h1>
+            <h1 className="select-none animate-wiggle font-bold bg-gradient-to-r bg-clip-text text-black animate-text">
+              Pick
+            </h1>
           </Link>
         </div>
         <div className="absolute visible z-1 sm:z-0 sm:invisible flex justify-end gap-2 top-[25px] right-[30px]">
