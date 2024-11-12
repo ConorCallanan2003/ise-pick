@@ -46,7 +46,7 @@ export default function ReviewContainer({ review }: { review: Review }) {
           {review.technologies && review.technologies.length > 0
             ? "Technologies: "
             : ""}
-          <div className="overflow-scroll">
+          <div>
             {(review.technologies ?? []).map((technology) => (
               <Chip size="sm" key={technology} className="select-none">
                 <div className="relative group">
