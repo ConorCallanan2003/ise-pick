@@ -11,6 +11,9 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  select,
+  Select,
+  SelectItem,
   useDisclosure,
 } from "@nextui-org/react";
 import { Plus } from "lucide-react";
@@ -123,6 +126,7 @@ const AddAddResidencyModal = ({
 export default function ResidenciesPage() {
   const [residencies, setResidencies] = useState<Residency[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [orderBy, setOrderBy] = useState("");
   const [dataStale, setDataStale] = useState(true);
 
   const {
@@ -141,7 +145,9 @@ export default function ResidenciesPage() {
         .getList(
           1,
           50,
-          searchTerm != "" ? { filter: `name ~ "%${searchTerm}%"` } : {}
+          searchTerm != ""
+            ? { filter: `name ~ "%${searchTerm}%"`, sort: orderBy ?? "" }
+            : { sort: orderBy ?? "" }
         );
       if (items) {
         items.map((item) => {
@@ -161,6 +167,16 @@ export default function ResidenciesPage() {
     }
   };
 
+  const changeOrder = (newKey: string) => {
+    setOrderBy(newKey);
+    setDataStale(true);
+  };
+
+  const changeSearchTerm = (newSearchTerm: string) => {
+    setSearchTerm(newSearchTerm);
+    setDataStale(true);
+  };
+
   useEffect(() => {
     getResidencies();
   }, [dataStale]);
@@ -172,13 +188,29 @@ export default function ResidenciesPage() {
         isOpen={isAddResidencyModalOpen}
         onClose={onAddResidencyModalClose}
       />
-      <div className="w-full flex justify-end">
+      <div className="w-full flex justify-between items-center pt-6">
+        <div className="flex gap-4 items-center">
+          <Select
+            size="sm"
+            label="Sort by"
+            defaultSelectedKeys={["name"]}
+            className="border-transparent sm:w-[240px] w-full"
+            children={[
+              { label: "Name", key: "name" },
+              { label: "Rating", key: "-avgScore" },
+              { label: "# Reviews", key: "-countScore" },
+            ].map(({ label, key }) => (
+              <SelectItem key={key}>{label}</SelectItem>
+            ))}
+            onChange={(e) => changeOrder(e.target.value)}
+          ></Select>
+        </div>
         <input
           placeholder="Search"
           type="search"
           className="border-3 border-transparent sm:w-[240px] w-full focus:ring-gray-500 focus:border-gray-500 focus:outline-none duration-200 cursor-text rounded-2xl bg-gray-200 text-black text-lg px-3 py-2"
           onChange={(e) => {
-            setSearchTerm(e.target.value);
+            changeSearchTerm(e.target.value);
           }}
         />
       </div>
