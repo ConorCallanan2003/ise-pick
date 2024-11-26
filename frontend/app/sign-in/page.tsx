@@ -10,31 +10,36 @@ import {
 } from "@nextui-org/react";
 import Cookie from "js-cookie";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function SignIn() {
   const [details, setDetails] = useState<Record<string, any>>({ admin: false });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
 
   const router = useRouter();
 
-  async function signIn(email: string, password: string) {
-    try {
-      const authData = await pb
-        .collection("users")
-        .authWithPassword(email, password);
-      Cookie.set("pbAuthToken", authData.token, {
-        expires: 1,
-        path: "/",
-      });
-
-      if (authData) {
-        router.push("/");
+  async function signIn() {
+    if (emailRef.current && passwordRef.current) {
+      const email = emailRef.current.value;
+      const password = passwordRef.current.value;
+      try {
+        const authData = await pb
+          .collection("users")
+          .authWithPassword(email, password);
+        Cookie.set("pbAuthToken", authData.token, {
+          expires: 1,
+          path: "/",
+        });
+        if (authData) {
+          router.push("/");
+        }
+      } catch (error) {
+        setError("Username or password incorrect");
+        setLoading(false);
       }
-    } catch (error) {
-      setError("Username or password incorrect");
-      setLoading(false);
     }
   }
 
@@ -57,14 +62,10 @@ export default function SignIn() {
                   >
                     Email
                   </label>
-                  <Input
-                    onChange={(e) => {
-                      setDetails((previous) => ({
-                        ...previous,
-                        email: e.target.value,
-                      }));
-                    }}
-                    className="text-black sm:text-sm text-lg"
+                  <input
+                    ref={emailRef}
+                    name="email"
+                    className="text-black pointer-text sm:text-sm text-lg rounded-lg bg-gray-100 border-gray-100 border-2 py-2 px-2 focus:ring-gray-500 focus:border-gray-500 focus:outline-none duration-200 cursor-text"
                     id="email"
                     placeholder="Email address"
                   />
@@ -76,18 +77,14 @@ export default function SignIn() {
                   >
                     Password
                   </label>
-                  <Input
-                    onChange={(e) => {
-                      setDetails((previous) => ({
-                        ...previous,
-                        password: e.target.value,
-                      }));
-                    }}
-                    className="text-black  sm:text-sm text-lg"
+                  <input
+                    ref={passwordRef}
+                    name="password"
+                    className="text-black sm:text-sm text-lg rounded-lg bg-gray-100 border-gray-100 border-2 py-2 px-2 focus:ring-gray-500 focus:border-gray-500 focus:outline-none duration-200 cursor-text"
                     id="password"
                     placeholder="Password"
                     type="password"
-                  ></Input>
+                  ></input>
                 </div>
                 <div className="flex text-black gap-0">
                   <p className="text-sm text-red-500">{error}</p>
@@ -112,7 +109,7 @@ export default function SignIn() {
               className="w-full font-bold text-white text-lg hover:scale-105 bg-sky-950"
               onClick={() => {
                 setLoading(true);
-                signIn(details["email"], details["password"]);
+                signIn();
               }}
             >
               Sign in
