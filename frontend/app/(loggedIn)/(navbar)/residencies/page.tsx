@@ -34,6 +34,8 @@ export default function ResidenciesPage() {
       return;
     }
 
+    const localStorageSortOrder = localStorage.getItem("sort_reviews_by");
+
     try {
       const { items }: { items: Residency[] } = await pb
         .collection("residencies_with_reviews")
@@ -42,7 +44,7 @@ export default function ResidenciesPage() {
           50,
           searchTerm != ""
             ? { filter: `name ~ "%${searchTerm}%"`, sort: orderBy ?? "" }
-            : { sort: orderBy ?? "" }
+            : { sort: localStorageSortOrder ?? "" }
         );
       if (items) {
         items.map((item) => {
