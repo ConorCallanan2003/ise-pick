@@ -203,6 +203,7 @@ export default function ResidenciesPage() {
               <SelectItem key={key}>{label}</SelectItem>
             ))}
             onChange={(e) => changeOrder(e.target.value)}
+            selectorIcon={<></>}
           ></Select>
         </div>
         <input

@@ -1,8 +1,6 @@
 "use client";
 import { pb } from "@/lib/pb";
 import {
-  Autocomplete,
-  AutocompleteItem,
   Button,
   Checkbox,
   Chip,
@@ -17,10 +15,20 @@ import {
   Textarea,
   useDisclosure,
 } from "@nextui-org/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  forwardRef,
+  MutableRefObject,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Residency } from "../page";
 import { ChevronLeft, X } from "lucide-react";
 import ReviewContainer from "@/app/components/review-container";
+import Autocomplete from "@/app/components/residency-page/autocomplete";
 
 type User = {
   name: string;
@@ -86,6 +94,8 @@ const AddModel = ({
   const [technologyOptions, setTechnologyOptions] = useState<string[]>([]);
   const [benefitsOptions, setBenefitsOptions] = useState<string[]>([]);
 
+  const autocompleteRef = useRef<any>(null);
+
   const getData = async () => {
     try {
       const { items: benefits }: { items: { value: string }[] } = await pb
@@ -107,7 +117,12 @@ const AddModel = ({
     getData();
   }, []);
   return (
-    <Modal backdrop="blur" isOpen={isOpen} onClose={onClose}>
+    <Modal
+      backdrop="blur"
+      isDismissable={false}
+      isOpen={isOpen}
+      onClose={onClose}
+    >
       <ModalContent>
         {(onClose) => (
           <>
@@ -142,7 +157,7 @@ const AddModel = ({
               <Input
                 type="number"
                 label="Salary (P/A)"
-                placeholder="€24,000"
+                placeholder="24,000"
                 step={1000}
                 startContent={
                   <div className="pointer-events-none flex items-center">
@@ -161,31 +176,18 @@ const AddModel = ({
                 onChange={(e) => setDescription(e.target.value)}
                 labelPlacement="outside"
               />
-
               <Autocomplete
-                allowsCustomValue
-                label="Technologies"
-                variant="bordered"
-                className="max-w-xs"
-                onInputChange={(e) => setCurrentTechnology(e.toLowerCase())}
-                defaultItems={technologyOptions as Iterable<object>}
-                onKeyDown={(e) => {
-                  // @ts-ignore
-                  e.continuePropagation();
-                  if (
-                    e.code == "Enter" &&
-                    !technologies.includes(currentTechnology.toLowerCase())
-                  ) {
-                    setTechnologies((prev) => [...prev, currentTechnology]);
+                placeholder={"Technology"}
+                options={technologyOptions}
+                onChange={() => null}
+                onSelect={(item) => {
+                  if (!technologies.includes(item.toLowerCase())) {
+                    setTechnologies((prev) => [...prev, item.toLowerCase()]);
                   }
                 }}
-              >
-                {technologyOptions.map((item) => (
-                  <AutocompleteItem key={item}>
-                    {item.toUpperCase()}
-                  </AutocompleteItem>
-                ))}
-              </Autocomplete>
+                name={"technology"}
+                label={"Technology"}
+              ></Autocomplete>
               <div className="flex gap-2 w-full overflow-scroll">
                 {technologies.map((technology) => (
                   <Chip
@@ -212,30 +214,18 @@ const AddModel = ({
                 ))}
               </div>
               <Autocomplete
-                allowsCustomValue
-                label="Benefits"
-                variant="bordered"
-                className="max-w-xs"
-                onInputChange={(e) => setCurrentBenefits(e)}
-                defaultItems={benefitsOptions as Iterable<object>}
-                onKeyDown={(e) => {
-                  // @ts-ignore
-                  e.continuePropagation();
-                  if (
-                    e.code == "Enter" &&
-                    !benefits.includes(currentBenefits.toLowerCase())
-                  ) {
-                    setBenefits((prev) => [...prev, currentBenefits]);
+                placeholder={"Benefits"}
+                options={benefitsOptions}
+                onChange={() => null}
+                onSelect={(item) => {
+                  if (!benefits.includes(item.toLowerCase())) {
+                    setBenefits((prev) => [...prev, item.toLowerCase()]);
                   }
                 }}
-              >
-                {benefitsOptions.map((item) => (
-                  <AutocompleteItem key={item}>
-                    {item.toUpperCase()}
-                  </AutocompleteItem>
-                ))}
-              </Autocomplete>
-              <div className="flex gap-2  w-full overflow-scroll  px-2">
+                name={"benefits"}
+                label={"Benefits"}
+              ></Autocomplete>
+              <div className="flex gap-2 w-full overflow-scroll">
                 {benefits.map((technology) => (
                   <Chip
                     key={technology}
