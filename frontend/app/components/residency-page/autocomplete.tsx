@@ -65,26 +65,6 @@ export default function AutocompleteTextInput({
       setSuggestions([]);
       setShowSuggestions(false);
     }
-    // if (event.keyCode === 38) {
-    //   if (activeSuggestionIndex === 0) {
-    //     return;
-    //   }
-
-    //   setActiveSuggestionIndex(activeSuggestionIndex - 1);
-    // } else if (event.keyCode === 40) {
-    //   if (activeSuggestionIndex - 1 === suggestions.length) {
-    //     return;
-    //   }
-
-    //   setActiveSuggestionIndex(activeSuggestionIndex + 1);
-    // } else if (event.keyCode === 13) {
-    //   if (suggestions.length > 0) {
-    //     onSelect(suggestions[activeSuggestionIndex]);
-    //     setInputValue("");
-    //     setSuggestions([]);
-    //     setShowSuggestions(false);
-    //   }
-    // }
   };
 
   const handleOptionSelect = (option: string) => {

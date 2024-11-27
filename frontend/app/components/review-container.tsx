@@ -6,37 +6,8 @@ import {
   Chip,
   image,
 } from "@nextui-org/react";
-import { Star } from "lucide-react";
 import { Review } from "@/app/(loggedIn)/(navbar)/residencies/[residency_id]/page";
-import { ReactElement } from "react";
-
-const FilledStar = ({ value }: { value: number }) => {
-  if (value >= 1) {
-    return <Star size={20} fill={"#FFC400"} color={"#FFC400"} />;
-  }
-  if (value <= 0) {
-    return <Star size={20} fill={"white"} color={"black"} />;
-  }
-  return (
-    <div className="relative">
-      {/* <h1>test</h1> */}
-      <Star
-        className="absolute top-0"
-        size={20}
-        fill={"#FFC400"}
-        color={"#FFC400"}
-      />
-      <div className="relative overflow-hidden left-[10px]">
-        <Star
-          className="relative right-[10px]"
-          size={20}
-          fill={"white"}
-          color={"black"}
-        />
-      </div>
-    </div>
-  );
-};
+import StarRating from "./small_reusable/StarRating";
 
 export default function ReviewContainer({ review }: { review: Review }) {
   return (
@@ -89,16 +60,7 @@ export default function ReviewContainer({ review }: { review: Review }) {
             ))}
           </div>
         </div>
-        <div className="flex md:pt-0 pt-4 justify-center align-center items-center">
-          <h4 className="pr-1 text-md font-medium leading-none ">
-            {review.score}
-          </h4>
-          <FilledStar value={review.score} />
-          <FilledStar value={review.score - 1} />
-          <FilledStar value={review.score - 2} />
-          <FilledStar value={review.score - 3} />
-          <FilledStar value={review.score - 4} />
-        </div>
+        <StarRating value={review.score} />
       </CardFooter>
     </Card>
   );

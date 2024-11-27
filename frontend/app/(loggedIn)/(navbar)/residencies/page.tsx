@@ -1,23 +1,11 @@
 "use client";
+import OrderBySelectComponent from "@/app/components/micro-components/OrderBySelect";
+import AddResidencyModal from "@/app/components/modals/AddResidencyModal";
 import ResidencyContainer from "@/app/components/residency-container";
 import { pb } from "@/lib/pb";
-import {
-  Button,
-  Card,
-  CardBody,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  select,
-  Select,
-  SelectItem,
-  useDisclosure,
-} from "@nextui-org/react";
+import { Card, CardBody, useDisclosure } from "@nextui-org/react";
 import { Plus } from "lucide-react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export type Residency = {
   id: string;
@@ -27,100 +15,6 @@ export type Residency = {
   website: string;
   avgScore?: number;
   countScore?: number;
-};
-
-const AddAddResidencyModal = ({
-  setDataStale,
-  isOpen,
-  onClose,
-}: {
-  setDataStale: Dispatch<SetStateAction<boolean>>;
-  isOpen: boolean;
-  onClose: () => void;
-}) => {
-  return (
-    <Modal backdrop="blur" isOpen={isOpen} onClose={onClose}>
-      <ModalContent>
-        {(onClose) => (
-          <>
-            <form
-              onSubmit={async (e: any) => {
-                const keys = ["name", "description", "logo", "website"];
-                e.preventDefault();
-                const formData = keys.reduce(
-                  (acc, key) => ({
-                    ...acc,
-                    [key]:
-                      key == "logo"
-                        ? e.target[key].files[0]
-                        : e.target[key].value,
-                  }),
-                  {}
-                );
-                const createdRecord = await pb
-                  .collection("residencies")
-                  .create(formData);
-                onClose();
-              }}
-            >
-              <ModalHeader className="flex flex-col gap-1">
-                Add new residency partner
-              </ModalHeader>
-              <ModalBody>
-                <div className="flex flex-col w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
-                  <h3 className="text-sm -mb-3">Company logo</h3>
-                  <input
-                    type="file"
-                    name="logo"
-                    className="px-1 py-1 file:cursor-pointer file:hover:scale-105 file:duration-200 file:font-medium file:text-gray-600 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-                  />
-                  <Input
-                    type="text"
-                    name="name"
-                    label="Name"
-                    placeholder="ACME Inc."
-                    labelPlacement="outside"
-                  />
-                  <Input
-                    type="text"
-                    name="description"
-                    label="Description"
-                    placeholder="ACME Corporation: Where innovation meets calamity"
-                    labelPlacement="outside"
-                  />
-                  <Input
-                    type="text"
-                    name="website"
-                    label="Website"
-                    placeholder="www.acme.gov"
-                    labelPlacement="outside"
-                  />
-                </div>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
-                  variant="light"
-                  onPress={() => {
-                    onClose();
-                  }}
-                >
-                  Close
-                </Button>
-                <Button
-                  type="submit"
-                  className="text-white font-medium bg-green-500 hover:bg-green-550 hover:scale-105"
-                  onPress={() => setDataStale(true)}
-                >
-                  Submit
-                </Button>
-              </ModalFooter>
-            </form>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
-  );
 };
 
 export default function ResidenciesPage() {
@@ -139,6 +33,7 @@ export default function ResidenciesPage() {
     if (!dataStale) {
       return;
     }
+
     try {
       const { items }: { items: Residency[] } = await pb
         .collection("residencies_with_reviews")
@@ -168,6 +63,7 @@ export default function ResidenciesPage() {
   };
 
   const changeOrder = (newKey: string) => {
+    localStorage.setItem("sort_reviews_by", newKey);
     setOrderBy(newKey);
     setDataStale(true);
   };
@@ -178,33 +74,29 @@ export default function ResidenciesPage() {
   };
 
   useEffect(() => {
+    const localStorageSortOrder = localStorage.getItem("sort_reviews_by");
+    if (localStorageSortOrder && orderBy != localStorageSortOrder) {
+      setOrderBy(localStorageSortOrder);
+    }
+  }, []);
+
+  useEffect(() => {
     getResidencies();
   }, [dataStale]);
 
   return (
     <div className="w-full h-full pt-10 flex flex-col justify-center items-center">
-      <AddAddResidencyModal
+      <AddResidencyModal
         setDataStale={setDataStale}
         isOpen={isAddResidencyModalOpen}
         onClose={onAddResidencyModalClose}
       />
       <div className="w-full flex justify-between items-center pt-6">
         <div className="flex gap-4 items-center">
-          <Select
-            size="sm"
-            label="Sort by"
-            defaultSelectedKeys={["name"]}
-            className="border-transparent sm:w-[240px] w-full"
-            children={[
-              { label: "Name", key: "name" },
-              { label: "Rating", key: "-avgScore" },
-              { label: "# Reviews", key: "-countScore" },
-            ].map(({ label, key }) => (
-              <SelectItem key={key}>{label}</SelectItem>
-            ))}
-            onChange={(e) => changeOrder(e.target.value)}
-            selectorIcon={<></>}
-          ></Select>
+          <OrderBySelectComponent
+            onChange={changeOrder}
+            currentValue={orderBy}
+          />
         </div>
         <input
           placeholder="Search"
@@ -245,7 +137,7 @@ export default function ResidenciesPage() {
                 key={residency.id}
                 name={residency.name}
                 description={residency.description}
-                id={residency.id}
+                residencyId={residency.id}
                 image={residency.logo}
                 avgScore={residency.avgScore}
                 countScore={residency.countScore}
