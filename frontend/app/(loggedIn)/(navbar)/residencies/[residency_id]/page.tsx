@@ -21,8 +21,10 @@ import { ChevronLeft, X } from "lucide-react";
 import ReviewContainer from "@/app/components/review-container";
 import Autocomplete from "@/app/components/residency-page/autocomplete";
 import AddReviewModal from "@/app/components/modals/AddReviewModal";
+import ModifiableReviewContainer from "@/app/components/modifiable-review-container";
 
 type User = {
+  id: string;
   name: string;
   avatar: string;
 };
@@ -135,7 +137,7 @@ export default function ResidencyPage({
   }
 
   return (
-    <div className="flex lg:px-20 md:px-8 px-2 w-full flex-col items-center justify-start pt-6">
+    <div className="flex lg:px-18 md:px-8 px-2 w-full flex-col items-center justify-start pt-6">
       {dataStale ? (
         <div className="w-full h-[600px] pt-10 flex flex-col justify-center items-center">
           <div role="status">
@@ -215,9 +217,16 @@ export default function ResidencyPage({
               <>
                 <h2 className="text-4xl font-bold text-center pb-6">Reviews</h2>
                 <div className="flex flex-col w-full">
-                  {reviews?.map((review) => (
-                    <ReviewContainer key={review.id} review={review} />
-                  ))}
+                  {reviews?.map((review) =>
+                    pb.authStore.model!.id == review.user!.id ? (
+                      <ModifiableReviewContainer
+                        key={review.id}
+                        review={review}
+                      />
+                    ) : (
+                      <ReviewContainer key={review.id} review={review} />
+                    )
+                  )}
                 </div>
               </>
             ) : (
