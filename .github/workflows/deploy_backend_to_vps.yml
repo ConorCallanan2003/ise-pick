@@ -15,7 +15,7 @@ jobs:
       - name: Deploy files
         run: |
           # Define the directory on the self-hosted runner where you want to deploy the files
-          DEPLOY_DIR=/root/ise-pick/pb_migrations
+          DEPLOY_DIR=/home/runner/ise-pick/pb_migrations
 
           # Remove any existing files in the deploy directory
           rm -rf ${DEPLOY_DIR}/*
