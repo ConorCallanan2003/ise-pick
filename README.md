@@ -27,4 +27,3 @@ Potential for more features further down the line (class notes, discussions, pas
 	```
 	NEXT_PUBLIC_PB_URL="http://localhost:8090/"
 	```
-
