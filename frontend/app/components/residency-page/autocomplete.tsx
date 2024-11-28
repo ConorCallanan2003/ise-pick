@@ -42,11 +42,11 @@ export default function AutocompleteTextInput({
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const userInput = event.target.value;
     setInputValue(userInput);
+    setActiveSuggestionIndex(0);
     onChange(userInput);
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
-    console.log(event.key);
     if (event.key == "ArrowUp") {
       if (activeSuggestionIndex > 0) {
         setActiveSuggestionIndex((prev) => prev - 1);
@@ -60,7 +60,11 @@ export default function AutocompleteTextInput({
       }
     }
     if (event.key == "Enter") {
-      onSelect(suggestions[activeSuggestionIndex]);
+      if (suggestions.length == 0) {
+        onSelect(inputValue);
+      } else {
+        onSelect(suggestions[activeSuggestionIndex]);
+      }
       setInputValue("");
       setSuggestions([]);
       setShowSuggestions(false);
