@@ -1,3 +1,4 @@
 startup_prod.sh
-backend/
+backend/*
 .DS_Store
+!backend/pb_migrations/
