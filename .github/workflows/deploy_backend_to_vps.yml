@@ -21,4 +21,4 @@ jobs:
           rm -rf ${DEPLOY_DIR}/*
 
           # Copy the files from the current commit to the deploy directory
-          cp -r ./migrations ${DEPLOY_DIR}/
+          cp -r ./backend/pb_migrations ${DEPLOY_DIR}/
