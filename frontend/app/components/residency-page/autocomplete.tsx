@@ -50,6 +50,7 @@ export default function AutocompleteTextInput({
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const userInput = event.target.value;
     setInputValue(userInput);
+    setActiveSuggestionIndex(0);
     onChange(userInput);
   };
 

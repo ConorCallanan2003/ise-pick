@@ -16,10 +16,10 @@ Potential for more features further down the line (class notes, discussions, pas
 
 ## How to test/run locally for development
 1. Pull the repo
-2. Download the [pocketbase binary](https://pocketbase.io/docs/) for your OS/architecture
+2. Download the [pocketbase binary](https://pocketbase.io/docs/) for your OS/architecture (deployed version is 0.22.23 so don't go too far from that)
 3. From the `frontend` directory, install dependencies (`npm i` or `bun i`) and then run it (`npm run dev` or `bun run dev`)
 4. Serve the pocketbase binary locally (`./pocketbase serve`)
-5. Add a file for dev environment variables `{project_dir}/.env.local`:
+5. Add a file for dev environment variables `{project_dir}/frontend/.env.local`:
 	```
 	NEXT_PUBLIC_PB_URL="<ADDRESS + PORT OF POCKETBASE>"
 	```
