@@ -50,7 +50,7 @@ export default function AddReviewModal({
   isOpen: boolean;
   onClose: () => void;
   residency: Residency;
-  setDataStale: Dispatch<SetStateAction<boolean>>;
+  setDataStale: () => void;
 }) {
   const [score, setScore] = useState(2.5);
   const [salary, setSalary] = useState(0);
@@ -252,7 +252,7 @@ export default function AddReviewModal({
                     technologies,
                     benefits
                   );
-                  setDataStale(true);
+                  setDataStale();
                   onClose();
                 }}
               >

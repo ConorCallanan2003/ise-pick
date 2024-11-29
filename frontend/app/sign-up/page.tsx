@@ -143,7 +143,7 @@ export default function SignUp() {
                       !details["password2"].match(pwRegex)
                     ) {
                       setError(
-                        "Password must contain at least one uppercase letter, one number, and one special symbol."
+                        "Password must be at least 8 characters and contain at least one uppercase letter, one number, and one special symbol."
                       );
                     }
                     if (
