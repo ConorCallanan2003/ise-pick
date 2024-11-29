@@ -1,28 +1,15 @@
 "use client";
 import { pb } from "@/lib/pb";
-import {
-  Button,
-  Checkbox,
-  Chip,
-  Input,
-  Link,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Slider,
-  Textarea,
-  useDisclosure,
-} from "@nextui-org/react";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Button, Link, useDisclosure } from "@nextui-org/react";
+import { useEffect, useRef, useState } from "react";
 import { Residency } from "../page";
 import { ChevronLeft, X } from "lucide-react";
 import ReviewContainer from "@/app/components/review-container";
-import Autocomplete from "@/app/components/residency-page/autocomplete";
 import AddReviewModal from "@/app/components/modals/AddReviewModal";
+import ModifiableReviewContainer from "@/app/components/modifiable-review-container";
 
 type User = {
+  id: string;
   name: string;
   avatar: string;
 };
@@ -46,7 +33,15 @@ export default function ResidencyPage({
 }) {
   const [residency, setResidency] = useState<Residency>();
   const [reviews, setReviews] = useState<Review[]>();
-  const [dataStale, setDataStale] = useState(true);
+  const dataStale = useRef<boolean>(true);
+  const loading = useRef<boolean>(false);
+
+  const setDataStale = () => {
+    dataStale.current = true;
+  };
+
+  const [technologyOptions, setTechnologyOptions] = useState<string[]>([]);
+  const [benefitsOptions, setBenefitsOptions] = useState<string[]>([]);
 
   const {
     isOpen: isOpenAddModal,
@@ -59,7 +54,7 @@ export default function ResidencyPage({
       const record: Residency = await pb.collection("residencies").getOne(id);
       const url = pb.files.getUrl(record, record.logo);
       record.logo = url;
-      setResidency(record);
+      return record;
     } catch (err: any) {
       if (!err.isAbort) {
         console.warn("non cancellation error:", err);
@@ -67,23 +62,21 @@ export default function ResidencyPage({
     }
   }
 
-  async function getReviews(residencyId: string) {
+  async function getReviews(returnedResidency: Residency) {
     try {
       const { items } = await pb
         .collection("residency_reviews")
         .getList(1, 50, {
-          filter: `residency = "${residencyId}"`,
+          filter: `residency = "${returnedResidency.id}"`,
           sort: "-created",
           expand: "user",
         });
       if (items) {
-        setReviews(
-          items.map((item: any) => {
-            item.residency = residency;
-            item.user = item.expand ? item.expand.user : undefined;
-            return item as unknown as Review;
-          })
-        );
+        return items.map((item: any) => {
+          item.residency = returnedResidency;
+          item.user = item.expand ? item.expand.user : undefined;
+          return item as unknown as Review;
+        });
       }
     } catch (err: any) {
       if (!err.isAbort) {
@@ -91,17 +84,51 @@ export default function ResidencyPage({
       }
     }
   }
-  useEffect(() => {
-    if (dataStale) {
-      getResidency(params.residency_id).then(() => {
-        getReviews(params.residency_id).then(() => {
-          setDataStale(false);
-        });
-      });
-    }
-  }, [dataStale]);
 
-  if (dataStale)
+  const getTechnologiesAndBenefits = async () => {
+    try {
+      const { items: benefits }: { items: { value: string }[] } = await pb
+        .collection("benefits")
+        .getList(1, 50);
+      setBenefitsOptions(benefits.map((benefit) => benefit.value));
+      const { items: technologies }: { items: { value: string }[] } = await pb
+        .collection("technologies")
+        .getList(1, 50);
+      setTechnologyOptions(technologies.map((technology) => technology.value));
+    } catch (err: any) {
+      if (!err.isAbort) {
+        console.warn("non cancellation error:", err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getTechnologiesAndBenefits();
+  }, []);
+
+  useEffect(() => {
+    if (dataStale.current && !loading.current) {
+      loading.current = true;
+      getResidency(params.residency_id).then(
+        (returnedResidency: Residency | undefined) => {
+          if (returnedResidency) {
+            getReviews(returnedResidency).then(
+              (returnedReviews: Review[] | undefined) => {
+                if (returnedReviews && returnedResidency) {
+                  setResidency(returnedResidency);
+                  setReviews(returnedReviews);
+                  dataStale.current = false;
+                }
+                loading.current = false;
+              }
+            );
+          }
+        }
+      );
+    }
+  }, [dataStale.current]);
+
+  if (dataStale.current)
     return (
       <div className="w-full h-[600px] pt-10 flex flex-col justify-center items-center">
         <div role="status">
@@ -135,8 +162,8 @@ export default function ResidencyPage({
   }
 
   return (
-    <div className="flex lg:px-20 md:px-8 px-2 w-full flex-col items-center justify-start pt-6">
-      {dataStale ? (
+    <div className="flex lg:px-18 md:px-8 px-2 w-full flex-col items-center justify-start pt-6">
+      {dataStale.current ? (
         <div className="w-full h-[600px] pt-10 flex flex-col justify-center items-center">
           <div role="status">
             <svg
@@ -215,9 +242,18 @@ export default function ResidencyPage({
               <>
                 <h2 className="text-4xl font-bold text-center pb-6">Reviews</h2>
                 <div className="flex flex-col w-full">
-                  {reviews?.map((review) => (
-                    <ReviewContainer key={review.id} review={review} />
-                  ))}
+                  {reviews?.map((review) =>
+                    pb.authStore.model!.id == review.user!.id ? (
+                      <ModifiableReviewContainer
+                        key={review.id}
+                        review={review}
+                        technologyOptions={technologyOptions}
+                        benefitsOptions={benefitsOptions}
+                      />
+                    ) : (
+                      <ReviewContainer key={review.id} review={review} />
+                    )
+                  )}
                 </div>
               </>
             ) : (
